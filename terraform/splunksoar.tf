@@ -1,7 +1,7 @@
 resource "aws_instance" "splunk_soar_ec2" {
   ami                         = data.aws_ami.al2023.id
   instance_type               = "t3.xlarge"
-  subnet_id                   = module.poc_pc.private_subnets_cidr_blocks[0]
+  subnet_id                   = module.poc_pc.private_subnets[0]
   associate_public_ip_address = false
   vpc_security_group_ids      = [aws_security_group.splunk_soar_ec2_sg.id]
   iam_instance_profile        = aws_iam_instance_profile.splunk_soar_ec2.name
@@ -12,6 +12,8 @@ resource "aws_instance" "splunk_soar_ec2" {
     encrypted             = true
     delete_on_termination = true
   }
+
+  depends_on = [module.poc_pc]
 
   tags = { Name = "splunk-soar-ec2" }
 }

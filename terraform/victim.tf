@@ -30,9 +30,11 @@ resource "aws_security_group" "victim_ec2_sg" {
 resource "aws_instance" "victim_ec2" {
   ami                         = data.aws_ami.al2023.id
   instance_type               = "t3.nano"
-  subnet_id                   = module.poc_pc.public_subnets_cidr_blocks[0]
+  subnet_id                   = module.poc_pc.public_subnets[0]
   vpc_security_group_ids      = [aws_security_group.victim_ec2_sg.id]
   associate_public_ip_address = true
+
+  depends_on = [module.poc_pc]
 
   tags = {
     Name = "victim-ubuntu-soar-test"

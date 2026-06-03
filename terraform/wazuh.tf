@@ -99,7 +99,7 @@ resource "aws_iam_instance_profile" "wazuh_ec2" {
 resource "aws_instance" "wazuh" {
   ami                         = data.aws_ami.al2023.id
   instance_type               = "t3.large"
-  subnet_id                   = module.poc_pc.private_subnets_cidr_blocks[0]
+  subnet_id                   = module.poc_pc.private_subnets[0]
   associate_public_ip_address = false
   vpc_security_group_ids      = [aws_security_group.wazuh_ec2.id]
   iam_instance_profile        = aws_iam_instance_profile.wazuh_ec2.name
@@ -110,6 +110,8 @@ resource "aws_instance" "wazuh" {
     encrypted             = true
     delete_on_termination = true
   }
+
+  depends_on = [module.poc_pc]
 
   tags = { Name = "wazuh-ec2" }
 }

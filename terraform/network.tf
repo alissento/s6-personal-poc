@@ -4,7 +4,7 @@ module "poc_pc" {
   name = "soar-vpc"
   cidr = "10.0.0.0/22"
 
-  azs             = ["eu-east-1a"]
+  azs             = ["eu-central-1a"]
   private_subnets = ["10.0.1.0/24"]
   public_subnets  = ["10.0.0.0/24"]
 
