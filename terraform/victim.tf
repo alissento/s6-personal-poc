@@ -25,6 +25,8 @@ resource "aws_security_group" "victim_ec2_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = { Name = "victim-ec2-sg" }
 }
 
 resource "aws_iam_role" "victim_ec2_role" {
@@ -67,5 +69,13 @@ resource "aws_instance" "victim_ec2" {
   tags = {
     Name = "victim-ubuntu-soar-test"
   }
+}
+
+resource "aws_security_group" "isolation_sg" {
+  name        = "isolation-sg"
+  description = "Isolation SG with no open ports"
+  vpc_id      = module.poc_pc.vpc_id
+
+  tags = { Name = "isolation-sg" }
 }
 

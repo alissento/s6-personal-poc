@@ -32,11 +32,11 @@ resource "aws_security_group" "splunk_soar_ec2_sg" {
   }
 
   ingress {
-    description = "Allow HTTPS from VPC (for Wazuh Webhooks/API)"
-    from_port   = 443
-    to_port     = 443
+    description = "Allow HTTPS (for Wazuh Webhooks/API)"
+    from_port   = 8443
+    to_port     = 8443
     protocol    = "tcp"
-    cidr_blocks = [module.poc_pc.vpc_cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = { Name = "splunk-soar-ec2-sg" }
