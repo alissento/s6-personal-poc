@@ -1,5 +1,5 @@
 resource "aws_instance" "splunk_soar_ec2" {
-  ami                         = data.aws_ami.al2023.id
+  ami                         = "ami-0771826ea69010c2f"
   instance_type               = "t3.xlarge"
   subnet_id                   = module.poc_pc.private_subnets[0]
   associate_public_ip_address = false
@@ -31,6 +31,14 @@ resource "aws_security_group" "splunk_soar_ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow HTTPS from VPC (for Wazuh Webhooks/API)"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [module.poc_pc.vpc_cidr_block]
+  }
+
   tags = { Name = "splunk-soar-ec2-sg" }
 }
 
@@ -52,6 +60,22 @@ resource "aws_iam_role" "splunk_soar_ec2" {
 resource "aws_iam_role_policy_attachment" "splunk_soar_ec2_ssm" {
   role       = aws_iam_role.splunk_soar_ec2.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy" "splunk_soar_lambda" {
+  name = "splunk-soar-lambda-policy"
+  role = aws_iam_role.splunk_soar_ec2.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = [
+        "lambda:*"
+      ]
+      Effect   = "Allow"
+      Resource = "*"
+    }]
+  })
 }
 
 resource "aws_iam_instance_profile" "splunk_soar_ec2" {
